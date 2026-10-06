@@ -1,0 +1,2 @@
+[functions.pets]
+verify_jwt = false

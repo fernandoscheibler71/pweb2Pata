@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  adopter
+  organization
+}
+
+model User {
+  id String @id @default(uuid()) @db.VarChar(36)
+  email String @unique @db.VarChar(191)
+  passwordHash String @map("password_hash") @db.VarChar(255)
+  fullName String? @map("full_name") @db.Text
+  role UserRole @default(adopter)
+  avatarUrl String? @map("avatar_url") @db.Text
+  cpf String? @db.VarChar(32)
+  phone String? @db.VarChar(32)
+  whatsapp String? @db.VarChar(32)
+  cep String? @db.VarChar(16)
+  street String? @db.Text
+  number String? @db.VarChar(32)
+  neighborhood String? @db.VarChar(120)
+  city String? @db.VarChar(120)
+  state String? @db.VarChar(4)
+  createdAt DateTime @default(now()) @map("created_at")
+  organizations Organization[]
+  personalPets PersonalPet[]
+  adoptionRequests AdoptionRequest[]
+  messages Message[]
+  @@map("users")
+}
+
+model Organization {
+  id String @id @default(uuid()) @db.VarChar(36)
+  ownerId String @unique @map("owner_id") @db.VarChar(36)
+  name String @db.VarChar(191)
+  cnpj String? @db.VarChar(32)
+  email String? @db.VarChar(191)
+  phone String? @db.VarChar(32)
+  cep String? @db.VarChar(16)
+  address String? @db.Text
+  neighborhood String? @db.VarChar(120)
+  city String? @db.VarChar(120)
+  state String? @db.VarChar(4)
+  website String? @db.Text
+  description String? @db.Text
+  logoUrl String? @map("logo_url") @db.Text
+  latitude Decimal? @db.Decimal(10, 7)
+  longitude Decimal? @db.Decimal(10, 7)
+  createdAt DateTime @default(now()) @map("created_at")
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  pets Pet[]
+  conversations Conversation[]
+  events VaccinationEvent[]
+  @@map("organizations")
+}
+
+model Pet {
+  id String @id @default(uuid()) @db.VarChar(36)
+  ongId String @map("ong_id") @db.VarChar(36)
+  name String @db.VarChar(191)
+  species String @db.VarChar(20)
+  breed String? @db.VarChar(120)
+  ageMonths Int? @map("age_months")
+  city String? @db.VarChar(120)
+  photoUrl String? @map("photo_url") @db.Text
+  description String @db.Text
+  sex String? @db.VarChar(10)
+  size String? @db.VarChar(10)
+  status String @default("available") @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+  organization Organization @relation(fields: [ongId], references: [id], onDelete: Cascade)
+  adoptionRequests AdoptionRequest[]
+  @@map("pets")
+}
+
+model AdoptionRequest {
+  id String @id @default(uuid()) @db.VarChar(36)
+  petId String @map("pet_id") @db.VarChar(36)
+  adopterId String @map("adopter_id") @db.VarChar(36)
+  message String? @db.Text
+  status String @default("submitted") @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  adopter User @relation(fields: [adopterId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+  @@unique([petId, adopterId])
+  @@map("adoption_requests")
+}
+
+model Conversation {
+  id String @id @default(uuid()) @db.VarChar(36)
+  adoptionRequestId String? @unique @map("adoption_request_id") @db.VarChar(36)
+  adopterId String @map("adopter_id") @db.VarChar(36)
+  ongId String @map("ong_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+  adoptionRequest AdoptionRequest? @relation(fields: [adoptionRequestId], references: [id], onDelete: SetNull)
+  organization Organization @relation(fields: [ongId], references: [id], onDelete: Cascade)
+  messages Message[]
+  @@map("conversations")
+}
+
+model Message {
+  id String @id @default(uuid()) @db.VarChar(36)
+  conversationId String @map("conversation_id") @db.VarChar(36)
+  senderId String @map("sender_id") @db.VarChar(36)
+  body String @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  @@map("messages")
+}
+
+model PersonalPet {
+  id String @id @default(uuid()) @db.VarChar(36)
+  ownerId String @map("owner_id") @db.VarChar(36)
+  name String @db.VarChar(191)
+  species String @db.VarChar(20)
+  breed String? @db.VarChar(120)
+  birthDate DateTime? @map("birth_date") @db.Date
+  photoUrl String? @map("photo_url") @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  records MedicalRecord[]
+  @@map("personal_pets")
+}
+
+model MedicalRecord {
+  id String @id @default(uuid()) @db.VarChar(36)
+  petId String @map("pet_id") @db.VarChar(36)
+  recordType String @map("record_type") @db.VarChar(80)
+  occurredOn DateTime @map("occurred_on") @db.Date
+  notes String? @db.Text
+  veterinarian String? @db.VarChar(191)
+  clinic String? @db.VarChar(191)
+  createdAt DateTime @default(now()) @map("created_at")
+  pet PersonalPet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  @@map("medical_records")
+}
+
+model VaccinationEvent {
+  id String @id @default(uuid()) @db.VarChar(36)
+  title String @db.VarChar(191)
+  startsAt DateTime @map("starts_at")
+  location String @db.Text
+  description String? @db.Text
+  organizerId String? @map("organizer_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+  organization Organization? @relation(fields: [organizerId], references: [id], onDelete: SetNull)
+  @@map("vaccination_events")
+}

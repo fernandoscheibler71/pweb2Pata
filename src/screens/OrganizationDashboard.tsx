@@ -1,0 +1,13 @@
+import { useEffect, useState } from "react";
+import type { Screen } from "../App";
+import { apiClient } from "../lib/apiClient";
+import { useAuth } from "../contexts/AuthContext";
+
+type Counts = { pets: number; pending: number; adopted: number; requests: number };
+export default function OrganizationDashboard({ navigate }: { navigate: (s: Screen) => void }) {
+  const { session, role } = useAuth(); const [counts, setCounts] = useState<Counts>({ pets: 0, pending: 0, adopted: 0, requests: 0 });
+  useEffect(() => { if (!apiClient || !session || role !== "organization") return; void (async () => { const { data: org } = await apiClient.from("organizations").select("id").eq("owner_id", session.user.id).maybeSingle(); if (!org) return; const { data: pets } = await apiClient.from("pets").select("id,status").eq("ong_id", org.id); const ids = (pets ?? []).map((p: any) => p.id); const { count } = ids.length ? await apiClient.from("adoption_requests").select("id", { count: "exact", head: true }).in("pet_id", ids) : { count: 0 }; setCounts({ pets: pets?.length ?? 0, pending: pets?.filter((p: any) => p.status === "pending").length ?? 0, adopted: pets?.filter((p: any) => p.status === "adopted").length ?? 0, requests: count ?? 0 }); })(); }, [role, session]);
+  if (role !== "organization") return <div className="p-6 text-[#7a5c3f]">Esta área é exclusiva para ONGs.</div>;
+  const cards = [["Animais cadastrados", counts.pets, "🐾"], ["Em processo", counts.pending, "⏳"], ["Adotados", counts.adopted, "❤️"], ["Solicitações", counts.requests, "📋"]];
+  return <div className="size-full overflow-y-auto bg-[#fdf6ee]"><div className="mx-auto max-w-5xl px-4 py-5 sm:p-8"><h1 className="text-2xl font-bold text-[#2d1f0f] sm:text-3xl" style={{ fontFamily: "'Fraunces', serif" }}>Painel da ONG</h1><p className="mt-1 text-sm text-[#7a5c3f]">Acompanhe a operação da sua instituição.</p><div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">{cards.map(([label, value, icon]) => <div key={String(label)} className="rounded-2xl border border-[#e0cdb8] bg-white p-5"><span className="text-2xl">{icon}</span><p className="mt-3 text-3xl font-bold text-[#2d1f0f]">{value}</p><p className="mt-1 text-sm text-[#7a5c3f]">{label}</p></div>)}</div><div className="mt-6 flex flex-col gap-3 rounded-2xl bg-[#d8f0e5] p-5 sm:flex-row"><button onClick={() => navigate("organization-animals")} className="rounded-xl bg-[#3d6b4f] px-4 py-3 text-sm font-bold text-white">Gerenciar animais</button><button onClick={() => navigate("organization-profile")} className="rounded-xl bg-white px-4 py-3 text-sm font-bold text-[#3d6b4f]">Atualizar perfil da ONG</button></div></div></div>;
+}

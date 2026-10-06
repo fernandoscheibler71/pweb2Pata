@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+html,
+body,
+#root {
+  height: 100%;
+  font-family: 'Nunito', sans-serif;
+}
+
+@theme inline {
+  --color-background: #fdf6ee;
+  --color-foreground: #2d1f0f;
+  --color-card: #fff9f3;
+  --color-card-foreground: #2d1f0f;
+  --color-primary: #c4582a;
+  --color-primary-foreground: #fff9f3;
+  --color-secondary: #3d6b4f;
+  --color-secondary-foreground: #fff9f3;
+  --color-muted: #efe5d8;
+  --color-muted-foreground: #7a5c3f;
+  --color-accent: #e8a842;
+  --color-accent-foreground: #2d1f0f;
+  --color-border: #e0cdb8;
+  --color-ring: #c4582a;
+  --radius: 1rem;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #e0cdb8; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #c4582a; }
+
+* { scroll-behavior: smooth; }
+
+/* Conteúdo fornecido pelo usuário nunca deve ampliar cards ou a página. */
+html { overflow-x: hidden; }
+img, svg, video { max-width: 100%; }
+input, select, textarea { min-width: 0; max-width: 100%; }
+h1, h2, h3, p, span, label, button, a { overflow-wrap: anywhere; }
+
+/* Estrutura mobile-first: menus passam para uma barra horizontal sem sobrepor o conteúdo. */
+@media (max-width: 767px) {
+  .app-shell { display: block; overflow: visible; }
+  .app-sidebar { position: fixed; z-index: 40; bottom: 0; left: 0; right: 0; width: 100%; height: 4rem; flex-direction: row; border-top: 1px solid #e0cdb8; border-right: 0; overflow-x: auto; }
+  .app-sidebar > div:first-child, .app-sidebar > div:last-child { display: none; }
+  .app-sidebar nav { display: flex; flex: 1; gap: .25rem; overflow-x: auto; padding: .35rem; white-space: nowrap; }
+  .app-sidebar nav button { width: auto; min-width: 4.5rem; justify-content: center; padding: .4rem .55rem; }
+  .app-sidebar nav button span:last-of-type { display: none; }
+  .app-sidebar nav button .ml-auto { display: none; }
+}
+
+@media (min-width: 1536px) { .app-shell main > * > div { max-width: 88rem; } }

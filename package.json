@@ -1,0 +1,47 @@
+{
+  "name": "pata-amiga",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "server": "dotenv -e .env.local -- tsx server/index.ts",
+    "dev:full": "concurrently \"npm run server\" \"npm run dev\"",
+    "prisma:generate": "dotenv -e .env.local -- prisma generate",
+    "prisma:migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "oxfmt"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "dotenv-cli": "^8.0.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "concurrently": "^9.2.1",
+    "oxfmt": "^0.2.0",
+    "prisma": "^6.19.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0",
+    "tsx": "^4.20.5",
+    "vite": "^8.0.5"
+  }
+}
