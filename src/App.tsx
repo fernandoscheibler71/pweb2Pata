@@ -82,7 +82,7 @@ function AppContent() {
         {activeScreen === "organization-animals" && role === "organization" && <OrganizationAnimals />}
         {activeScreen === "my-adoptions" && <MyAdoptions />}
         {activeScreen === "organization-dashboard" && role === "organization" && <OrganizationDashboard navigate={navigate} />}
-        {activeScreen === "organization-adoption-requests" && role === "organization" && <OrganizationAdoptionRequests />}
+        {activeScreen === "organization-adoption-requests" && role === "organization" && <OrganizationAdoptionRequests navigate={navigate} />}
       </main>
     </div>
   );

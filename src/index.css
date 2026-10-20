@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+.pata-map-marker { background: transparent; border: 0; }
+.pata-map-marker span { display: grid; width: 42px; height: 42px; place-items: center; border: 3px solid white; border-radius: 9999px 9999px 9999px 0; box-shadow: 0 4px 10px rgb(45 31 15 / 28%); transform: rotate(-45deg); }
+.pata-map-marker i { font-size: 18px; font-style: normal; transform: rotate(45deg); }
+.pata-current-location { background: transparent; border: 0; }
+.pata-current-location span { display: block; width: 18px; height: 18px; border: 3px solid white; border-radius: 9999px; background: #2879ff; box-shadow: 0 0 0 5px rgb(40 121 255 / 24%), 0 2px 6px rgb(0 0 0 / 28%); }
 @import 'tailwindcss';
 
 html,
@@ -52,3 +59,13 @@ h1, h2, h3, p, span, label, button, a { overflow-wrap: anywhere; }
 }
 
 @media (min-width: 1536px) { .app-shell main > * > div { max-width: 88rem; } }
+
+/* Garantia para qualquer tela: no celular, grades de desktop viram uma coluna. */
+@media (max-width: 639px) {
+  .app-shell main { width: 100%; min-width: 0; }
+  .app-shell main .grid[class~="grid-cols-2"],
+  .app-shell main .grid[class~="grid-cols-3"],
+  .app-shell main .grid[class~="grid-cols-4"] { grid-template-columns: minmax(0, 1fr) !important; }
+  .app-shell main [class~="col-span-2"] { grid-column: auto !important; }
+  .app-shell main > div > div { padding-left: 1rem; padding-right: 1rem; }
+}

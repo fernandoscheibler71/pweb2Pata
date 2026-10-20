@@ -33,8 +33,9 @@ export default function OrganizationProfile() {
     const result = organizationId ? await apiClient.from("organizations").update(payload).eq("id", organizationId).select("id").single() : await apiClient.from("organizations").insert(payload).select("id").single();
     if (result.error) { setNotice(result.error.message); return; }
     setOrganizationId(result.data.id);
+    const geocode = await apiClient.organizations.geocode();
     setEditing(false);
-    setNotice("Dados da ONG salvos com sucesso.");
+    setNotice(geocode.error ? `Dados salvos, mas não foi possível localizar a ONG no mapa: ${geocode.error.message}` : "Dados da ONG salvos e localização atualizada no mapa.");
   }
   const address = [form.address, form.neighborhood, form.city && `${form.city}${form.state ? `, ${form.state}` : ""}`, form.cep && `CEP ${form.cep}`].filter(Boolean).join(" · ");
   if (!loaded) return <div className="p-8 text-[#7a5c3f]">Carregando dados da ONG…</div>;

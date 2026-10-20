@@ -45,7 +45,7 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
   if (done) {
     return (
       <div className="size-full flex items-center justify-center bg-[#fdf6ee]">
-        <div className="max-w-md w-full mx-auto px-8 text-center">
+        <div className="max-w-md w-full mx-auto px-4 sm:px-8 text-center">
           <div className="w-24 h-24 bg-[#d8f0e5] rounded-full flex items-center justify-center text-5xl mb-6 mx-auto">🎉</div>
           <h1 className="text-[#2d1f0f] text-3xl font-bold mb-3" style={{ fontFamily: "'Fraunces', serif" }}>Solicitação enviada!</h1>
           <p className="text-[#7a5c3f] text-sm leading-relaxed mb-8">
@@ -55,7 +55,7 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
             <p className="text-[#b8987a] text-xs mb-1">Número do protocolo</p>
             <p className="text-[#2d1f0f] font-bold font-mono text-xl">#ADO-2024-08741</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <button onClick={() => navigate("chat")} className="flex-1 bg-[#efe5d8] text-[#2d1f0f] font-bold py-3 rounded-xl text-sm">
               💬 Mensagens
             </button>
@@ -70,7 +70,7 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
 
   return (
     <div className="size-full overflow-y-auto bg-[#fdf6ee]">
-      <div className="max-w-4xl mx-auto px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
 
         {/* Header */}
         <button onClick={() => step > 1 ? setStep(step - 1) : navigate("animal-profile")} className="text-[#c4582a] font-bold text-sm mb-6 flex items-center gap-1 hover:gap-2 transition-all">
@@ -82,9 +82,9 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
         <p className="text-[#7a5c3f] text-sm mb-8">Adotando: <strong>Mel</strong> · ONG Patinhas SP</p>
 
         {/* Step indicators */}
-        <div className="flex items-center gap-0 mb-10">
+        <div className="mb-8 grid grid-cols-2 gap-4 sm:flex sm:items-center sm:gap-0 sm:mb-10">
           {steps.map((s, i) => (
-            <div key={s.id} className="flex items-center flex-1">
+            <div key={s.id} className="flex items-center justify-center sm:flex-1">
               <div className="flex flex-col items-center gap-1.5">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-base font-bold transition-all ${
@@ -100,28 +100,28 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
                 </p>
               </div>
               {i < steps.length - 1 && (
-                <div className={`flex-1 h-0.5 mx-2 mb-4 rounded-full ${s.id < step ? "bg-[#c4582a]" : "bg-[#e0cdb8]"}`} />
+                <div className={`hidden sm:block flex-1 h-0.5 mx-2 mb-4 rounded-full ${s.id < step ? "bg-[#c4582a]" : "bg-[#e0cdb8]"}`} />
               )}
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Form */}
-          <div className="col-span-2 bg-white rounded-2xl border border-[#e0cdb8] p-8">
+          <div className="bg-white rounded-2xl border border-[#e0cdb8] p-4 sm:p-8 lg:col-span-2">
             <h2 className="text-[#2d1f0f] font-bold text-lg mb-6" style={{ fontFamily: "'Fraunces', serif" }}>
               {steps[step - 1].icon} {steps[step - 1].title}
             </h2>
 
             {step === 1 && (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {[
                   { label: "Nome completo", key: "name", placeholder: "Digite seu nome completo", full: true },
                   { label: "CPF", key: "cpf", placeholder: "000.000.000-00" },
                   { label: "Telefone / WhatsApp", key: "phone", placeholder: "(11) 99999-9999" },
                   { label: "E-mail", key: "email", placeholder: "voce@exemplo.com", full: true },
                 ].map((f) => (
-                  <div key={f.key} className={f.full ? "col-span-2" : ""}>
+                  <div key={f.key} className={f.full ? "sm:col-span-2" : ""}>
                     <label className="block text-[#2d1f0f] text-sm font-bold mb-1.5">{f.label}</label>
                     <input
                       value={form[f.key as keyof typeof form]}
@@ -138,7 +138,7 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
               <div className="space-y-6">
                 <div>
                   <label className="block text-[#2d1f0f] text-sm font-bold mb-3">Tipo de residência</label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     {["Casa", "Apartamento", "Sítio"].map((t) => (
                       <button key={t} onClick={() => setForm({ ...form, houseType: t })}
                         className={`py-3 rounded-xl text-sm font-bold border transition-all ${form.houseType === t ? "bg-[#c4582a] text-white border-[#c4582a]" : "bg-[#fdf6ee] text-[#7a5c3f] border-[#e0cdb8] hover:border-[#c4582a]"}`}>
@@ -169,7 +169,7 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
               <div className="space-y-6">
                 <div>
                   <label className="block text-[#2d1f0f] text-sm font-bold mb-3">Tem ou já teve animais?</label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     {["Sim, tenho", "Já tive", "Primeira vez"].map((t) => (
                       <button key={t} onClick={() => setForm({ ...form, hasPets: t })}
                         className={`py-3 rounded-xl text-sm font-bold border transition-all ${form.hasPets === t ? "bg-[#c4582a] text-white border-[#c4582a]" : "bg-[#fdf6ee] text-[#7a5c3f] border-[#e0cdb8] hover:border-[#c4582a]"}`}>
@@ -193,7 +193,7 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
 
             {step === 4 && (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {[
                     { l: "Nome", v: form.name || "Não informado" },
                     { l: "Telefone", v: form.phone || "(11) 98765-4321" },
@@ -217,7 +217,7 @@ export default function AdoptionProcess({ navigate, animalId }: { navigate: (s: 
               </div>
             )}
 
-            <div className="flex gap-3 mt-8">
+            <div className="flex flex-col-reverse gap-3 mt-8 sm:flex-row">
               {step > 1 && (
                 <button onClick={() => setStep(step - 1)} className="px-6 py-3 bg-[#efe5d8] text-[#2d1f0f] font-bold rounded-xl text-sm hover:bg-[#e0cdb8] transition-all">
                   ← Anterior

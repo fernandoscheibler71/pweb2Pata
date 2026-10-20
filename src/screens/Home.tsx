@@ -23,6 +23,7 @@ export default function Home({ navigate }: { navigate: (s: Screen, id?: string) 
   const [featured, setFeatured] = useState<Animal[]>([]);
   const [data, setData] = useState<HomeData>(initialData);
   const [loading, setLoading] = useState(true);
+  const [heroIndex, setHeroIndex] = useState(0);
 
   useEffect(() => {
     async function loadHome() {
@@ -34,7 +35,7 @@ export default function Home({ navigate }: { navigate: (s: Screen, id?: string) 
           apiClient.from("adoption_requests").select("id", { count: "exact", head: true }).eq("status", "approved"),
           apiClient.from("vaccination_events").select("title, starts_at, location, description").gte("starts_at", new Date().toISOString()).order("starts_at").limit(1).maybeSingle(),
         ]);
-        setFeatured(animalsResult.slice(0, 4));
+        setFeatured(animalsResult.slice(0, 5));
         setData({ animalCount: animalsResult.length, organizationCount: organizationsResult.count ?? 0, adoptionCount: adoptionsResult.count ?? 0, event: eventResult.data });
       } finally {
         setLoading(false);
@@ -43,11 +44,18 @@ export default function Home({ navigate }: { navigate: (s: Screen, id?: string) 
     void loadHome();
   }, []);
 
+  useEffect(() => {
+    if (featured.length < 2) return;
+    const carousel = window.setInterval(() => setHeroIndex((index) => (index + 1) % featured.length), 5000);
+    return () => window.clearInterval(carousel);
+  }, [featured.length]);
+
   const formatCount = (value: number) => new Intl.NumberFormat("pt-BR").format(value);
   const eventDate = data.event ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(data.event.starts_at)) : "Nenhum evento cadastrado";
+  const heroAnimal = featured.length ? featured[heroIndex % featured.length] : undefined;
   return (
     <div className="size-full overflow-y-auto bg-[#fdf6ee]">
-      <div className="max-w-6xl mx-auto px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -60,23 +68,27 @@ export default function Home({ navigate }: { navigate: (s: Screen, id?: string) 
         </div>
 
         {/* Hero + Quick Actions */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
           {/* Hero banner */}
-          <div className="col-span-2 relative h-52 bg-[#c4582a] rounded-2xl overflow-hidden">
-            <AnimalPhoto src={featured[0]?.photo_url ?? null} alt={featured[0]?.name ?? "Animal em destaque"} className="absolute inset-0 h-full w-full object-cover opacity-30" />
-            <div className="relative z-10 p-8 h-full flex flex-col justify-between">
+          <div className="relative h-52 bg-[#c4582a] rounded-2xl overflow-hidden md:col-span-2">
+            <AnimalPhoto src={heroAnimal?.photo_url ?? null} alt={heroAnimal?.name ?? "Animal em destaque"} className="absolute inset-0 h-full w-full object-cover opacity-40 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#8f3d20]/70 to-[#c4582a]/20" />
+            <div className="relative z-10 h-full p-5 sm:p-8 flex flex-col justify-between">
               <div>
                 <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">🐾 Destaque</span>
                 <h2 className="text-white text-2xl font-bold mt-3 leading-tight" style={{ fontFamily: "'Fraunces', serif" }}>
-                  {data.event?.title ?? "Encontre um novo amigo"}
+                  {heroAnimal?.name ?? "Encontre um novo amigo"}
                 </h2>
+                {heroAnimal && <p className="mt-1 text-sm text-white/90">{heroAnimal.breed ?? "Sem raça definida"} · {humanAge(heroAnimal.age_months)} · 📍 {heroAnimal.city ?? "Localização não informada"}</p>}
               </div>
-              <button
-                onClick={() => navigate("adoption-list")}
-                className="self-start bg-white text-[#c4582a] font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-[#fde8da] transition-all"
-              >
-                Ver animais disponíveis →
-              </button>
+              <div className="flex items-end justify-between gap-3">
+                <button onClick={() => heroAnimal ? navigate("animal-profile", heroAnimal.id) : navigate("adoption-list")} className="bg-white text-[#c4582a] font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-[#fde8da] transition-all">
+                  {heroAnimal ? `Conhecer ${heroAnimal.name} →` : "Ver animais disponíveis →"}
+                </button>
+                {featured.length > 1 && <div className="flex gap-1.5" aria-label="Selecionar animal em destaque">
+                  {featured.map((animal, index) => <button key={animal.id} onClick={() => setHeroIndex(index)} aria-label={`Mostrar ${animal.name}`} className={`h-2 rounded-full transition-all ${index === heroIndex % featured.length ? "w-5 bg-white" : "w-2 bg-white/50 hover:bg-white/80"}`} />)}
+                </div>}
+              </div>
             </div>
           </div>
 
@@ -99,7 +111,7 @@ export default function Home({ navigate }: { navigate: (s: Screen, id?: string) 
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 gap-3 mb-8 sm:grid-cols-2 lg:grid-cols-4">
           {quickActions.map((a) => (
             <button
               key={a.screen}
@@ -126,7 +138,7 @@ export default function Home({ navigate }: { navigate: (s: Screen, id?: string) 
               Ver todos →
             </button>
           </div>
-          {loading ? <p className="text-[#7a5c3f] text-sm">Carregando animais cadastrados…</p> : featured.length === 0 ? <p className="text-[#7a5c3f] text-sm">Ainda não há animais disponíveis cadastrados.</p> : <div className="grid grid-cols-4 gap-4">
+          {loading ? <p className="text-[#7a5c3f] text-sm">Carregando animais cadastrados…</p> : featured.length === 0 ? <p className="text-[#7a5c3f] text-sm">Ainda não há animais disponíveis cadastrados.</p> : <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {featured.map((a) => (
               <div
                 key={a.id}
@@ -158,14 +170,14 @@ export default function Home({ navigate }: { navigate: (s: Screen, id?: string) 
         {/* Vaccination CTA */}
         <button
           onClick={() => navigate("vaccination-events")}
-          className="w-full bg-[#3d6b4f] rounded-2xl p-5 flex items-center gap-5 hover:bg-[#325a42] transition-all active:scale-[0.99]"
+          className="w-full bg-[#3d6b4f] rounded-2xl p-5 flex items-start gap-4 sm:items-center sm:gap-5 hover:bg-[#325a42] transition-all active:scale-[0.99]"
         >
           <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-3xl">💉</div>
           <div className="text-left">
             <p className="text-white font-bold text-base">{data.event?.title ?? "Próximo evento de vacinação"}</p>
             <p className="text-white/70 text-sm mt-0.5">{eventDate}{data.event ? ` · ${data.event.location} · ${data.event.description ?? ""}` : ""}</p>
           </div>
-          <span className="ml-auto text-white text-xl font-bold">→</span>
+          <span className="ml-auto pt-2 text-white text-xl font-bold sm:pt-0">→</span>
         </button>
 
       </div>

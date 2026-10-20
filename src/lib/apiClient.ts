@@ -36,6 +36,13 @@ class Query {
 }
 export const apiClient = {
   from: (table: string) => new Query(table), functions: { invoke: (name: string, { body }: { body: unknown }) => request(`/${name}`, { method: "POST", body: JSON.stringify(body) }) },
+  vaccinationEvents: { delete: (id: string) => request(`/vaccination-events/${encodeURIComponent(id)}`, { method: "DELETE" }) },
+  organizationAdoptionRequests: {
+    updateStatus: (id: string, status: string) => request(`/organization-adoption-requests/${encodeURIComponent(id)}/status`, { method: "POST", body: JSON.stringify({ status }) }),
+    conversation: (id: string) => request(`/organization-adoption-requests/${encodeURIComponent(id)}/conversation`, { method: "POST", body: JSON.stringify({}) }),
+  },
+  nearbyPlaces: (latitude: number, longitude: number, radiusKm = 5) => request(`/nearby-places?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&radius_km=${encodeURIComponent(radiusKm)}`),
+  organizations: { geocode: () => request("/organizations/geocode", { method: "POST", body: JSON.stringify({}) }) },
   auth: {
     async getSession() { return { data: { session: current() } }; }, async getUser() { return { data: { user: current()?.user || null } }; },
     async signInWithPassword(credentials: { email: string; password: string }) { const result = await request("/auth/signin", { method: "POST", body: JSON.stringify(credentials) }); if (!result.error) { localStorage.setItem(storageKey, JSON.stringify(result)); notify("SIGNED_IN", result as Session); } return { data: result.error ? null : result, error: result.error }; },

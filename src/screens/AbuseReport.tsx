@@ -24,13 +24,13 @@ export default function AbuseReport({ navigate }: { navigate: (s: Screen) => voi
   if (step === "sent") {
     return (
       <div className="size-full flex items-center justify-center bg-[#fdf6ee]">
-        <div className="max-w-lg w-full mx-auto px-8 text-center">
+        <div className="max-w-lg w-full mx-auto px-4 sm:px-8 text-center">
           <div className="w-24 h-24 bg-[#fde0dd] rounded-full flex items-center justify-center text-5xl mb-6 mx-auto">🚨</div>
           <h1 className="text-[#2d1f0f] text-3xl font-bold mb-3" style={{ fontFamily: "'Fraunces', serif" }}>Denúncia enviada!</h1>
           <p className="text-[#7a5c3f] text-sm leading-relaxed mb-6">
             Sua denúncia foi encaminhada à Delegacia de Proteção Animal e à ONG mais próxima. Obrigada por proteger!
           </p>
-          <div className="bg-white border border-[#e0cdb8] rounded-2xl p-5 mb-6 grid grid-cols-3 gap-4">
+          <div className="bg-white border border-[#e0cdb8] rounded-2xl p-5 mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[{ l: "Protocolo", v: "#DEN-2024-00342" }, { l: "Status", v: "Em análise" }, { l: "Prazo", v: "48h úteis" }].map((r) => (
               <div key={r.l} className="text-center">
                 <p className="text-[#b8987a] text-xs">{r.l}</p>
@@ -44,7 +44,7 @@ export default function AbuseReport({ navigate }: { navigate: (s: Screen) => voi
               <span className="text-[#c4582a] font-bold"> (11) 3392-0000</span>
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <button onClick={() => setStep("form")} className="flex-1 bg-[#efe5d8] text-[#2d1f0f] font-bold py-3 rounded-xl text-sm">Nova denúncia</button>
             <button onClick={() => navigate("home")} className="flex-1 bg-[#c4582a] text-white font-bold py-3 rounded-xl text-sm">Voltar ao início</button>
           </div>
@@ -55,16 +55,16 @@ export default function AbuseReport({ navigate }: { navigate: (s: Screen) => voi
 
   return (
     <div className="size-full overflow-y-auto bg-[#fdf6ee]">
-      <div className="max-w-5xl mx-auto px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
 
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="mb-8 flex flex-wrap items-center gap-4">
           <div className="w-14 h-14 bg-[#fde0dd] rounded-2xl flex items-center justify-center text-2xl">🚨</div>
           <div>
             <h1 className="text-[#2d1f0f] text-3xl font-bold" style={{ fontFamily: "'Fraunces', serif" }}>Denunciar maus-tratos</h1>
             <p className="text-[#7a5c3f] text-sm mt-0.5">Anônimo e confidencial — proteja quem não tem voz</p>
           </div>
-          <div className="ml-auto bg-[#c4582a] rounded-2xl px-5 py-3 flex items-center gap-3">
+          <div className="bg-[#c4582a] rounded-2xl px-5 py-3 flex items-center gap-3 sm:ml-auto">
             <span className="text-2xl">📞</span>
             <div>
               <p className="text-white font-bold text-sm">Emergência?</p>
@@ -73,13 +73,13 @@ export default function AbuseReport({ navigate }: { navigate: (s: Screen) => voi
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Form */}
-          <div className="col-span-2 space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             {/* Abuse types */}
-            <div className="bg-white rounded-2xl border border-[#e0cdb8] p-6">
+            <div className="bg-white rounded-2xl border border-[#e0cdb8] p-4 sm:p-6">
               <h2 className="text-[#2d1f0f] font-bold mb-4">Tipo de maus-tratos</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {abuseTypes.map((t) => (
                   <button
                     key={t.label}
@@ -97,7 +97,7 @@ export default function AbuseReport({ navigate }: { navigate: (s: Screen) => voi
             </div>
 
             {/* Location + description */}
-            <div className="bg-white rounded-2xl border border-[#e0cdb8] p-6 space-y-4">
+            <div className="bg-white rounded-2xl border border-[#e0cdb8] p-4 sm:p-6 space-y-4">
               <h2 className="text-[#2d1f0f] font-bold">Detalhes da ocorrência</h2>
               <div>
                 <label className="block text-[#2d1f0f] text-sm font-bold mb-1.5">Local do ocorrido</label>
